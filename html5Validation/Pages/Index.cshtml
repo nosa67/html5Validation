@@ -1,0 +1,20 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "jQueryを用いないHTML5のバリデーション";
+}
+
+<div class="text-center">
+    <h1 class="display-4">JQueryを用いずHTML5とJavaScriptだけのバリデーション対応</h1>
+    <hr />
+
+    <form method="post">
+        必須（RequiredH5）:<input asp-for="Inputs.RequireString" />
+        文字列長（StringLengthH5[5-10]）:<input asp-for="Inputs.StringLengthString" />
+
+        <div asp-validation-summary="All" class="notification is-danger" style="display:contents"></div>
+        <button type="submit">実行</button>
+        <div>@Model.SuccessMesssage</div>
+    </form>
+
+</div>
