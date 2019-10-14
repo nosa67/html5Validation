@@ -15,31 +15,13 @@ namespace html5Validation.Validator
         /// </summary>
         string _regularExpression = "";
 
+        public string PatternName { get; set; }
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="RegularExpression">正規表現</param>
         public RegularExpressionH5Attribute(string RegularExpression)
-        {
-            _regularExpression = RegularExpression;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="RegularExpression">正規表現</param>
-        /// <param name="errorMessageAccessor">エラーメッセージへのアクセサ</param>
-        public RegularExpressionH5Attribute(string RegularExpression, Func<string> errorMessageAccessor) : base(errorMessageAccessor)
-        {
-            _regularExpression = RegularExpression;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="RegularExpression">正規表現</param>
-        /// <param name="errorMessage">エラーメッセージ</param>
-        public RegularExpressionH5Attribute(string RegularExpression, string errorMessage) : base(errorMessage)
         {
             _regularExpression = RegularExpression;
         }
@@ -63,7 +45,7 @@ namespace html5Validation.Validator
             }
             else
             {
-                return new ValidationResult(ErrorMessage);
+                return new ValidationResult(GetErrorMessage(validationContext.DisplayName));
             }
         }
 
@@ -73,14 +55,49 @@ namespace html5Validation.Validator
         /// <param name="context">クライアントのバリデーションコンテキスト</param>
         public void AddValidation(ClientModelValidationContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            if (context == null)　throw new ArgumentNullException(nameof(context));
 
-            // タグに「required="required"」と「required-err-msg="<エラーメッセジ>"」を設定する
+            // 以下のタグ属性を設定する
+            // pattern                          正規表現
+            // notsupported-regular-err-msg     未サポートブラウザでのエラーメッセージ
+            // regular-err-msg                  バリデーションで設定されたエラーメッセージ
             MergeAttribute(context.Attributes, "pattern", _regularExpression);
-            if (!string.IsNullOrWhiteSpace(ErrorMessage)) MergeAttribute(context.Attributes, "regular-err-msg", ErrorMessage);
+            MergeAttribute(context.Attributes, "notsupported-regular-err-msg", "入力が正しい形式では有りません。");
+            if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                MergeAttribute(context.Attributes, "regular-err-msg", ErrorMessage);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(PatternName))
+                {
+                    MergeAttribute(context.Attributes, "regular-err-msg", "入力が正しい形式(" + PatternName + ")では有りません。");
+                }
+            }
+        }
+
+        /// <summary>
+        /// サーバーバリデーション時のエラーメッセージ取得
+        /// </summary>
+        /// <param name="displayName">表示名称（DisplayNameアトリビュートで変更できる）</param>
+        /// <returns>必須エラーメッセージ</returns>
+        string GetErrorMessage(string displayName)
+        {
+            if (string.IsNullOrEmpty(ErrorMessage))
+            {
+                if (string.IsNullOrEmpty(PatternName))
+                {
+                    return "[" + displayName + "]の入力が正しい形式では有りません。";
+                }
+                else
+                {
+                    return "[" + displayName + "]の入力が正しい形式(" + PatternName + ")では有りません。";
+                }
+            }
+            else
+            {
+                return ErrorMessage;
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ namespace html5Validation.Validator
 {
     /// <summary>
     /// enum型の入力チェック
+    /// inputによる入力は考えられないので、実際には使うことはないと思うが。
     /// </summary>
     public class EnumH5Attribute : ValidationH5Attributecs, IClientModelValidator
     {
@@ -17,30 +18,7 @@ namespace html5Validation.Validator
         public EnumH5Attribute(Type EnumType)
         {
             _enumType = EnumType;
-            var msg = "";
-            foreach (var enumOne in Enum.GetValues(EnumType))
-            {
-                msg += "," + enumOne.ToString();
-            }
-            ErrorMessage = msg.Substring(1) + "のいずれかを入力してください。";
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="errorMessageAccessor">エラーメッセージへのアクセサ</param>
-        public EnumH5Attribute(Type EnumType, Func<string> errorMessageAccessor) : base(errorMessageAccessor)
-        {
-            _enumType = EnumType;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="errorMessage">エラーメッセージ</param>
-        public EnumH5Attribute(Type EnumType, string errorMessage) : base(errorMessage)
-        {
-            _enumType = EnumType;
+            
         }
 
         /// <summary>
@@ -52,7 +30,7 @@ namespace html5Validation.Validator
         protected override ValidationResult IsValid(
             object value, ValidationContext validationContext)
         {
-            //  入寮必須はここではチェック対象外
+            //  入力必須はここではチェック対象外
             if (value == null) return ValidationResult.Success;
 
             if (value.GetType() == _enumType)
@@ -68,12 +46,12 @@ namespace html5Validation.Validator
                 }
                 else
                 {
-                    return new ValidationResult(ErrorMessage);
+                    return new ValidationResult(GetErrorMessage(validationContext.DisplayName));
                 }
             }
             else
             {
-                return new ValidationResult(ErrorMessage);
+                return new ValidationResult(GetErrorMessage(validationContext.DisplayName));
             }
         }
 
@@ -88,13 +66,57 @@ namespace html5Validation.Validator
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var enumValues = "";
-            foreach (var enumItem in Enum.GetValues(_enumType)) enumValues += "," + enumItem.ToString();
-            enumValues = enumValues.Substring(1);
+            var enumValues = getTenumLists();
 
-            // タグに「required="required"」と「required-err-msg="<エラーメッセジ>"」を設定する
+            // 以下のタグ属性を設定する
+            // enum-values                      列挙のリスト
+            // enum-err-msg                     エラーメッセージ
             MergeAttribute(context.Attributes, "enum-values", enumValues);
-            if (!string.IsNullOrWhiteSpace(ErrorMessage)) MergeAttribute(context.Attributes, "enum-err-msg", ErrorMessage);
+            if (string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                MergeAttribute(context.Attributes, "enum-err-msg", getTenumLists() + "以外が入力されています。");
+            }
+            else
+            {
+                MergeAttribute(context.Attributes, "enum-err-msg", ErrorMessage);
+            }
+        }
+
+
+        /// <summary>
+        /// サーバーバリデーション時のエラーメッセージ取得
+        /// </summary>
+        /// <param name="displayName">表示名称（DisplayNameアトリビュートで変更できる）</param>
+        /// <returns>必須エラーメッセージ</returns>
+        string GetErrorMessage(string displayName)
+        {
+            if (string.IsNullOrEmpty(ErrorMessage))
+            {
+                var msg = "";
+                foreach (var enumOne in Enum.GetValues(_enumType))
+                {
+                    msg += "," + enumOne.ToString();
+                }
+                return "[" + displayName + "]に" + getTenumLists() + "以外が入力されています。";
+            }
+            else
+            {
+                return ErrorMessage;
+            }
+        }
+
+        /// <summary>
+        /// 列挙リストの作成
+        /// </summary>
+        /// <returns></returns>
+        string getTenumLists()
+        {
+            var msg = "";
+            foreach (var enumOne in Enum.GetValues(_enumType))
+            {
+                msg += "," + enumOne.ToString();
+            }
+            return msg.Substring(1);
         }
     }
 }

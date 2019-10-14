@@ -18,23 +18,8 @@ namespace html5Validation.Validator
         }
 
         /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="errorMessageAccessor">エラーメッセージへのアクセサ</param>
-        public EmailAddressH5Attribute(Func<string> errorMessageAccessor) : base(DataType.EmailAddress, errorMessageAccessor)
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="errorMessage">エラーメッセージ</param>
-        public EmailAddressH5Attribute(string errorMessage) : base(DataType.EmailAddress, errorMessage)
-        {
-        }
-
-        /// <summary>
         /// バリデーション（サーバーサイド）
+        /// クライアントバリデーションが外せなかったのでここはテストできてません
         /// </summary>
         /// <param name="value">値</param>
         /// <param name="validationContext">バリデーションコンテキスト</param>
@@ -60,13 +45,13 @@ namespace html5Validation.Validator
                     catch (FormatException)
                     {
                         // メールアドレスクラスを作成できないならエラー
-                        return new ValidationResult(ErrorMessage);
+                        return new ValidationResult(GetErrorMessage(validationContext.DisplayName));
                     }
                 }
                 else
                 {
                     // 文字列でなければエラー
-                    return new ValidationResult(ErrorMessage);
+                    return new ValidationResult(GetErrorMessage(validationContext.DisplayName));
                 }
             }
         }
@@ -77,15 +62,39 @@ namespace html5Validation.Validator
         /// <param name="context"></param>
         public void AddValidation(ClientModelValidationContext context)
         {
-            if (context == null)
+            if (context == null) throw new ArgumentNullException(nameof(context));
+
+            // TagHelperの影響で、type属性が「email」になっている
+            // 以下のタグ属性を設定する
+            // email-err-msg                    未サポートブラウザでのエラーメッセージ
+            // typemis-err-msg                  バリデーションで設定されたエラーメッセージ(サポートされている場合で独自エラーメッセージが設定されている場合)
+            if (string.IsNullOrWhiteSpace(ErrorMessage))
             {
-                throw new ArgumentNullException(nameof(context));
+                MergeAttribute(context.Attributes, "email-err-msg", "メールアドレスになっていません。");
+            }
+            else
+            {
+                MergeAttribute(context.Attributes, "email-err-msg", ErrorMessage);
+                MergeAttribute(context.Attributes, "typemis-err-msg", ErrorMessage);
             }
 
-            // タグの「typemis-err-msg」属性にエラーメッセージを設定
-            if (!string.IsNullOrWhiteSpace(ErrorMessage)) MergeAttribute(context.Attributes, "typemis-err-msg", ErrorMessage);
         }
 
-
+        /// <summary>
+        /// サーバーバリデーション時のエラーメッセージ取得
+        /// </summary>
+        /// <param name="displayName">表示名称（DisplayNameアトリビュートで変更できる）</param>
+        /// <returns>必須エラーメッセージ</returns>
+        string GetErrorMessage(string displayName)
+        {
+            if (string.IsNullOrEmpty(ErrorMessage))
+            {
+                return displayName + "がメールアドレスになっていません。";
+            }
+            else
+            {
+                return ErrorMessage;
+            }
+        }
     }
 }

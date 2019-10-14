@@ -8,12 +8,288 @@
     <h1 class="display-4">JQueryを用いずHTML5とJavaScriptだけのバリデーション対応</h1>
     <hr />
 
-    <form method="post">
-        必須（RequiredH5）:<input asp-for="Inputs.RequireString" />
-        文字列長（StringLengthH5[5-10]）:<input asp-for="Inputs.StringLengthString" />
+    <form method="post">   
+        <div class="content ">
+            <div class="field">
+                <div style="margin:5px 0 0 0">
+                    <label asp-for="Inputs.RequireString"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.RequireString" />
+                    </div>
+                </div>
+
+                <div style="margin:5px 0 0 0">
+                    <label asp-for="Inputs.RequireStringWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.RequireStringWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:5px 0 0 0">
+                    <label asp-for="Inputs.CompareString"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.CompareString" />
+                    </div>
+                </div>
+
+                <div style="margin:5px 0 0 0">
+                    <label asp-for="Inputs.CompareStringWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.CompareStringWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.StringLengthStringMin"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.StringLengthStringMin" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.StringLengthStringMax"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.StringLengthStringMax" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.StringLengthStringBoth"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.StringLengthStringBoth" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.StringLengthStringMinWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.StringLengthStringMinWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.StringLengthStringMaxWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.StringLengthStringMaxWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.StringLengthStringBothWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.StringLengthStringBothWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.MailAddress"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.MailAddress" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.MailAddressWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.MailAddressWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.Fluits"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.Fluits" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.FluitsWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.FluitsWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label class="label">日付</label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.InputDay" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.IntRangeMin"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.IntRangeMin" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.IntRangeMinStep"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.IntRangeMinStep" />
+                    </div>
+                </div>
+
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.IntRangeMax"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.IntRangeMax" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.IntRangeBoth"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.IntRangeBoth" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.IntRangeBothStep"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.IntRangeBothStep" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.IntRangeMinWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.IntRangeMinWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.IntRangeMinStepWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.IntRangeMinStepWithMSG" />
+                    </div>
+                </div>
+
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.IntRangeMaxWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.IntRangeMaxWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.IntRangeBothWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.IntRangeBothWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.IntRangeBothStepWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.IntRangeBothStepWithMSG" />
+                    </div>
+                </div>
+
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.DoubleRangeMin"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.DoubleRangeMin" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.DoubleRangeMinStep"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.DoubleRangeMinStep" />
+                    </div>
+                </div>
+
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.DoubleRangeMax"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.DoubleRangeMax" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.DoubleRangeBoth"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.DoubleRangeBoth" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.DoubleRangeBothStep"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.DoubleRangeBothStep" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.DoubleRangeMinWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.DoubleRangeMinWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.DoubleRangeMinStepWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.DoubleRangeMinStepWithMSG" />
+                    </div>
+                </div>
+
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.DoubleRangeMaxWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.DoubleRangeMaxWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.DoubleRangeBothWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.DoubleRangeBothWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.DoubleRangeBothStepWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.DoubleRangeBothStepWithMSG" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.Regular"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.Regular" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.RegularPatternName"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.RegularPatternName" />
+                    </div>
+                </div>
+
+                <div style="margin:1em 0 0 0">
+                    <label asp-for="Inputs.RegularWithMSG"></label>
+                    <div class="control">
+                        <input class="input" asp-for="Inputs.RegularWithMSG" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
 
         <div asp-validation-summary="All" class="notification is-danger" style="display:contents"></div>
+        
         <button type="submit">実行</button>
+
         <div>@Model.SuccessMesssage</div>
     </form>
 

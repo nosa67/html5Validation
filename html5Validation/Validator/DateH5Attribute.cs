@@ -9,10 +9,12 @@ namespace html5Validation.Validator
     /// </summary>
     public class DateH5Attribute : DataTypeH5Attribute, IClientModelValidator
     {
+        const string DEFAULT_RERORMSG = "日付が正しくありません。";
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public DateH5Attribute() : base(DataType.Date)
+        public DateH5Attribute() : base(DataType.Date, DEFAULT_RERORMSG)
         {
         }
 
@@ -52,10 +54,10 @@ namespace html5Validation.Validator
                 {
                     // 時分秒ミリ秒が0以外はエラー
                     var work = (DateTime)value;
-                    if (work.Hour != 0) return new ValidationResult(ErrorMessage);
-                    if (work.Minute != 0) return new ValidationResult(ErrorMessage);
-                    if (work.Second != 0) return new ValidationResult(ErrorMessage);
-                    if (work.Millisecond != 0) return new ValidationResult(ErrorMessage);
+                    if (work.Hour != 0) return new ValidationResult(ErrorMessageString);
+                    if (work.Minute != 0) return new ValidationResult(ErrorMessageString);
+                    if (work.Second != 0) return new ValidationResult(ErrorMessageString);
+                    if (work.Millisecond != 0) return new ValidationResult(ErrorMessageString);
 
                     // 日付だけなので正常
                     return ValidationResult.Success;
@@ -63,7 +65,7 @@ namespace html5Validation.Validator
                 else
                 {
                     // 日時でなければエラー
-                    return new ValidationResult(ErrorMessage);
+                    return new ValidationResult(ErrorMessageString);
                 }
             }
         }
@@ -80,7 +82,7 @@ namespace html5Validation.Validator
             }
 
             // タグの「typemis-err-msg」属性にエラーメッセージを設定
-            if (!string.IsNullOrWhiteSpace(ErrorMessage)) MergeAttribute(context.Attributes, "typemis-err-msg", ErrorMessage);
+            if (!string.IsNullOrWhiteSpace(ErrorMessageString)) MergeAttribute(context.Attributes, "date-err-msg", ErrorMessageString);
         }
 
 

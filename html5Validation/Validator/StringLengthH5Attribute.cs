@@ -10,47 +10,24 @@ namespace html5Validation.Validator
     public class StringLengthH5Attribute : ValidationH5Attributecs, IClientModelValidator
     {
         /// <summary>
-        /// 最小長 -1 ならチェック対象外
+        /// 最小長 0 ならチェック対象外
         /// </summary>
-        int _minLength = 0;
+        public int MaxLength { get; set; } = 0;
 
         /// <summary>
-        /// 最大長　-1 ならチェック対処具合
+        /// 最大を超えた場合のエラーメッセージ
         /// </summary>
-        int _maxLength = 0;
+        public string OverMaxErrorMessage { get; set; }
 
         /// <summary>
-        /// コンストラクタ
+        /// 最大長　0 ならチェック対処具合
         /// </summary>
-        /// <param name="MaxLength">最大長</param>
-        /// <param name="MinLength">最小長</param>
-        public StringLengthH5Attribute(int MaxLength, int MinLength = 0)
-        {
-            _minLength = MinLength;
-            _maxLength = MaxLength;
-        }
+        public int MinLength { get; set; } = 0;
 
         /// <summary>
-        /// コンストラクタ
+        /// 最大を超えた場合のエラーメッセージ
         /// </summary>
-        /// <param name="MaxLength">最大長</param>
-        /// <param name="MinLength">最小長</param>
-        /// <param name="errorMessageAccessor">エラーメッセージへのアクセサ</param>
-        public StringLengthH5Attribute(int MaxLength, Func<string> errorMessageAccessor, int MinLength = 0) : base(errorMessageAccessor)
-        {
-            _minLength = MinLength;
-            _maxLength = MaxLength;
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="errorMessage">エラーメッセージ</param>
-        public StringLengthH5Attribute(int MaxLength, string errorMessage, int MinLength =0) : base(errorMessage)
-        {
-            _minLength = MinLength;
-            _maxLength = MaxLength;
-        }
+        public string UnderMinErrorMessage { get; set; }
 
         /// <summary>
         /// バリデーション（サーバーサイド）
@@ -65,36 +42,83 @@ namespace html5Validation.Validator
             if (value == null)　return ValidationResult.Success;
 
             // 最小桁数チェック
-            if ((_minLength > 0)  && (value.ToString().Trim().Length < _minLength))
+            if ((MinLength > 0)  && (value.ToString().Trim().Length < MinLength))
             {
-                return new ValidationResult(ErrorMessage);
+                return new ValidationResult(GetUnderMinErrorMessage(validationContext.DisplayName));
             }
 
             // 最大桁数チェック
-            if (value.ToString().Trim().Length > _maxLength)
+            if ((MaxLength > 0) && value.ToString().Trim().Length > MaxLength)
             {
-                // 入力の桁数（トリムしたあと）が1以上なら正常
-                return new ValidationResult(ErrorMessage);
+                return new ValidationResult(GetOverMaxErrorMessage(validationContext.DisplayName));
             }
 
             return ValidationResult.Success;
         }
 
-        /// <summary>
+        /// <summary>   
         /// クライアントでのバリデーション用の操作
         /// </summary>
         /// <param name="context">クライアントのバリデーションコンテキスト</param>
         public void AddValidation(ClientModelValidationContext context)
         {
-            if (context == null)
+            if (context == null) throw new ArgumentNullException(nameof(context));
+
+            if (MinLength > 0)
             {
-                throw new ArgumentNullException(nameof(context));
+                // 最小値が設定されている場合以下のタグ属性を設定する
+                // minlength                            最小桁数
+                // notsupported-min-length-err-msg      未サポートブラウザでのエラーメッセージ
+                // min-length-err-msg                   バリデーションで設定されたエラーメッセージ
+                MergeAttribute(context.Attributes, "minlength", MinLength.ToString());
+                MergeAttribute(context.Attributes, "notsupported-min-length-err-msg", "最小桁数「" + MinLength.ToString() + "」より短いです。");
+                if (!string.IsNullOrWhiteSpace(UnderMinErrorMessage)) MergeAttribute(context.Attributes, "min-length-err-msg", UnderMinErrorMessage);
             }
 
-            // タグに「required="required"」と「required-err-msg="<エラーメッセジ>"」を設定する
-            if (_minLength >0) MergeAttribute(context.Attributes, "minlength", _minLength.ToString());
-            if (_maxLength > 0) MergeAttribute(context.Attributes, "maxlength", _maxLength.ToString());
-            if (!string.IsNullOrWhiteSpace(ErrorMessage)) MergeAttribute(context.Attributes, "stringLength-err-msg", ErrorMessage);
+            if (MaxLength > 0)
+            {
+                // 最大値が設定されている場合以下のタグ属性を設定する
+                // maxlength                            最大桁数
+                // notsupported-max-length-err-msg      未サポートブラウザでのエラーメッセージ
+                // max-length-err-msg                   バリデーションで設定されたエラーメッセージ
+                MergeAttribute(context.Attributes, "maxlength", MaxLength.ToString());
+                MergeAttribute(context.Attributes, "notsupported-max-length-err-msg", "最大桁数「" + MaxLength.ToString() + "」より長いです。");
+                if (!string.IsNullOrWhiteSpace(ErrorMessageString)) MergeAttribute(context.Attributes, "max-length-err-msg", ErrorMessageString);
+            }
+        }
+
+        /// <summary>
+        /// 最大多数のサーバーバリデーション時のエラーメッセージ取得
+        /// </summary>
+        /// <param name="displayName">表示名称（DisplayNameアトリビュートで変更できる）</param>
+        /// <returns>必須エラーメッセージ</returns>
+        string GetOverMaxErrorMessage(string displayName)
+        {
+            if (string.IsNullOrEmpty(OverMaxErrorMessage))
+            {
+                return displayName + "の値が最大値「" + MaxLength.ToString() + "」を超えています。";
+            }
+            else
+            {
+                return OverMaxErrorMessage;
+            }
+        }
+
+        /// <summary>
+        /// 最小桁数のサーバーバリデーション時のエラーメッセージ取得
+        /// </summary>
+        /// <param name="displayName">表示名称（DisplayNameアトリビュートで変更できる）</param>
+        /// <returns>必須エラーメッセージ</returns>
+        string GetUnderMinErrorMessage(string displayName)
+        {
+            if (string.IsNullOrEmpty(UnderMinErrorMessage))
+            {
+                return displayName + "の値が最小値「" + MinLength.ToString() + "」より小さいです。";
+            }
+            else
+            {
+                return UnderMinErrorMessage;
+            }
         }
     }
 }
