@@ -81,10 +81,14 @@ namespace html5Validation.Pages
             [EnumH5(typeof(Fluits),ErrorMessage = "列挙エラー(メッセージ変更有)")]
             [DisplayName("列挙（フルーツ：リンゴ,みかん,イチゴ,Glape,桃）(メッセージ変更有)")]
             public Fluits? FluitsWithMSG { get; set; }
-            
 
-            [DateH5("これなんかどうなる？")]
+            [DateH5()]
+            [DisplayName("日付")]
             public DateTime? InputDay { get; set; }
+
+            [DateH5(ErrorMessage = "日付異常（変更）")]
+            [DisplayName("日付(メッセージ変更有)")]
+            public DateTime? InputDayWithMSG { get; set; }
 
             [RangeH5(Min = 1)]
             [DisplayName("整数最小1")]

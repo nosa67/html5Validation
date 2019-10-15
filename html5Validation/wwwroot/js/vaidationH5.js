@@ -139,13 +139,7 @@ window.onload = function () {
                 // メールアドレスバリデーション
                 if (typeAttribute === "email") {
                     if (!isEmail(e.target.value)) {
-                        emailErrMsg = e.target.getAttribute("typemis-err-msg");
-                        if (emailErrMsg === null) {
-                            e.target.setCustomValidity(e.target.getAttribute("email-err-msg"));
-                        }
-                        else {
-                            e.target.setCustomValidity(emailErrMsg);
-                        }
+                        e.target.setCustomValidity(e.target.getAttribute("email-err-msg"));
                         return;
                     }
                 }

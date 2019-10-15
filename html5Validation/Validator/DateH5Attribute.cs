@@ -9,28 +9,10 @@ namespace html5Validation.Validator
     /// </summary>
     public class DateH5Attribute : DataTypeH5Attribute, IClientModelValidator
     {
-        const string DEFAULT_RERORMSG = "日付が正しくありません。";
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public DateH5Attribute() : base(DataType.Date, DEFAULT_RERORMSG)
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="errorMessageAccessor">エラーメッセージへのアクセサ</param>
-        public DateH5Attribute(Func<string> errorMessageAccessor) : base(DataType.Date, errorMessageAccessor)
-        {
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="errorMessage">エラーメッセージ</param>
-        public DateH5Attribute(string errorMessage) : base(DataType.Date, errorMessage)
+        public DateH5Attribute() : base(DataType.Date)
         {
         }
 
@@ -54,10 +36,10 @@ namespace html5Validation.Validator
                 {
                     // 時分秒ミリ秒が0以外はエラー
                     var work = (DateTime)value;
-                    if (work.Hour != 0) return new ValidationResult(ErrorMessageString);
-                    if (work.Minute != 0) return new ValidationResult(ErrorMessageString);
-                    if (work.Second != 0) return new ValidationResult(ErrorMessageString);
-                    if (work.Millisecond != 0) return new ValidationResult(ErrorMessageString);
+                    if (work.Hour != 0) return new ValidationResult(GetErrorMessage(validationContext.DisplayName));
+                    if (work.Minute != 0) return new ValidationResult(GetErrorMessage(validationContext.DisplayName));
+                    if (work.Second != 0) return new ValidationResult(GetErrorMessage(validationContext.DisplayName));
+                    if (work.Millisecond != 0) return new ValidationResult(GetErrorMessage(validationContext.DisplayName));
 
                     // 日付だけなので正常
                     return ValidationResult.Success;
@@ -65,7 +47,7 @@ namespace html5Validation.Validator
                 else
                 {
                     // 日時でなければエラー
-                    return new ValidationResult(ErrorMessageString);
+                    return new ValidationResult(GetErrorMessage(validationContext.DisplayName));
                 }
             }
         }
@@ -81,10 +63,36 @@ namespace html5Validation.Validator
                 throw new ArgumentNullException(nameof(context));
             }
 
-            // タグの「typemis-err-msg」属性にエラーメッセージを設定
-            if (!string.IsNullOrWhiteSpace(ErrorMessageString)) MergeAttribute(context.Attributes, "date-err-msg", ErrorMessageString);
+            // TagHelperの影響で、type属性が「email」になっている
+            // 以下のタグ属性を設定する
+            // date-err-msg                    未サポートブラウザでのエラーメッセージ
+            // typemis-err-msg                  バリデーションで設定されたエラーメッセージ(サポートされている場合で独自エラーメッセージが設定されている場合)
+            if (string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                MergeAttribute(context.Attributes, "date-err-msg", "日付になっていません。");
+            }
+            else
+            {
+                MergeAttribute(context.Attributes, "date-err-msg", ErrorMessage);
+                MergeAttribute(context.Attributes, "typemis-err-msg", ErrorMessage);
+            }
         }
 
-
+        /// <summary>
+        /// サーバーバリデーション時のエラーメッセージ取得
+        /// </summary>
+        /// <param name="displayName">表示名称（DisplayNameアトリビュートで変更できる）</param>
+        /// <returns>必須エラーメッセージ</returns>
+        string GetErrorMessage(string displayName)
+        {
+            if (string.IsNullOrEmpty(ErrorMessage))
+            {
+                return displayName + "が日付になっていません。";
+            }
+            else
+            {
+                return ErrorMessage;
+            }
+        }
     }
 }
